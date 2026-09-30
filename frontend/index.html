@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Customer Support</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            color: #1e293b;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .online {
+            color: #059669;
+            background: #ecfdf5;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .main {
+            width: 90%;
+            max-width: 1050px;
+            margin: 45px auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .hero span {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: #64748b;
+            max-width: 650px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h3 {
+            margin-bottom: 6px;
+            font-size: 19px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px #eef2ff;
+        }
+
+        textarea {
+            height: 140px;
+            resize: vertical;
+        }
+
+        .send {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .send:hover {
+            opacity: 0.9;
+        }
+
+        .send:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .response {
+            min-height: 190px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .metadata {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 7px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .source {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .suggestions {
+            grid-column: 1 / 3;
+        }
+
+        .suggestions h3 {
+            margin-bottom: 15px;
+        }
+
+        .suggestion-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion {
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: #475569;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            padding: 25px;
+            font-size: 12px;
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        @media (max-width: 800px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .suggestions {
+                grid-column: 1;
+            }
+
+            .hero h2 {
+                font-size: 30px;
+            }
+
+            .online {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <header class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                🤖
+            </div>
+
+            <div>
+                <h1>AI Customer Support</h1>
+                <p>Ticket Automation System</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            ● AI Support Online
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+        <section class="hero">
+
+            <span>✨ AI-Powered Customer Service</span>
+
+            <h2>How can we help you?</h2>
+
+            <p>
+                Ask about orders, payments, delivery, refunds,
+                support tickets, and company policies.
+            </p>
+
+        </section>
+
+
+        <section class="grid">
+
+
+            <!-- CHAT -->
+
+            <div class="card">
+
+                <h3>💬 Ask Support</h3>
+
+                <p class="subtitle">
+                    Enter your question below
+                </p>
+
+
+                <label for="customerId">
+                    Customer ID
+                </label>
+
+                <input
+                    id="customerId"
+                    type="text"
+                    value="customer-001"
+                    placeholder="Enter customer ID"
+                >
+
+
+                <label for="message">
+                    Your Message
+                </label>
+
+                <textarea
+                    id="message"
+                    placeholder="Example: What is the status of my order 45821?"
+                ></textarea>
+
+
+                <button
+                    id="sendButton"
+                    class="send"
+                    onclick="sendMessage()"
+                >
+                    Send Message
+                </button>
+
+            </div>
+
+
+            <!-- RESPONSE -->
+
+            <div class="card">
+
+                <h3>✨ AI Response</h3>
+
+                <p class="subtitle">
+                    Your support response
+                </p>
+
+
+                <div
+                    id="response"
+                    class="response"
+                >
+                    Your response will appear here.
+                </div>
+
+
+                <div
+                    id="metadata"
+                    class="metadata"
+                    style="display: none;"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- SUGGESTIONS -->
+
+            <div class="card suggestions">
+
+                <h3>Try asking</h3>
+
+                <div class="suggestion-buttons">
+
+                    <button
+                        class="suggestion"
+                        onclick="setMessage('What is the status of my order 45821?')"
+                    >
+                        📦 Order Status
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="setMessage('When will my order arrive?')"
+                    >
+                        🚚 Delivery
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="setMessage('What is the refund policy?')"
+                    >
+                        💰 Refund
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="setMessage('What is the payment status of order 45821?')"
+                    >
+                        💳 Payment
+                    </button>
+
+                    <button
+                        class="suggestion"
+                        onclick="setMessage('I have a problem with my order')"
+                    >
+                        🎫 Support Ticket
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        AI Customer Support & Ticket Automation System
+        | FastAPI + RAG
+    </footer>
+
+
+    <script>
+
+        const API_URL = "http://127.0.0.1:8000";
+
+        const conversationId = "frontend-demo-001";
+
+
+        function setMessage(text) {
+
+            document.getElementById("message").value = text;
+
+            document.getElementById("message").focus();
+
+        }
+
+
+        async function sendMessage() {
+
+            const customerId =
+                document.getElementById("customerId").value.trim();
+
+            const message =
+                document.getElementById("message").value.trim();
+
+            const responseBox =
+                document.getElementById("response");
+
+            const metadata =
+                document.getElementById("metadata");
+
+            const button =
+                document.getElementById("sendButton");
+
+
+            if (!customerId) {
+
+                responseBox.className = "response error";
+
+                responseBox.innerText =
+                    "Please enter your Customer ID.";
+
+                return;
+            }
+
+
+            if (!message) {
+
+                responseBox.className = "response error";
+
+                responseBox.innerText =
+                    "Please enter your question.";
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.innerText = "Processing...";
+
+
+            responseBox.className = "response";
+
+            responseBox.innerText =
+                "AI is processing your request...";
+
+
+            metadata.style.display = "none";
+
+
+            try {
+
+                const result = await fetch(
+                    API_URL + "/chat",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            message: message,
+
+                            conversation_id:
+                                conversationId,
+
+                            customer_id:
+                                customerId
+
+                        })
+                    }
+                );
+
+
+                const data = await result.json();
+
+
+                if (!result.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "Backend returned an error."
+                    );
+
+                }
+
+
+                responseBox.className =
+                    "response";
+
+                responseBox.innerText =
+                    data.answer;
+
+
+                metadata.innerHTML =
+
+                    '<span class="badge">' +
+                    'Intent: ' +
+                    data.intent +
+                    '</span>' +
+
+                    '<span class="badge source">' +
+                    'Source: ' +
+                    (data.source || "knowledge_base") +
+                    '</span>';
+
+
+                metadata.style.display = "flex";
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                responseBox.className =
+                    "response error";
+
+
+                responseBox.innerText =
+                    "Could not connect to the backend.\n\n" +
+                    "Please make sure FastAPI is running on " +
+                    "http://127.0.0.1:8000";
+
+
+            } finally {
+
+                button.disabled = false;
+
+                button.innerText = "Send Message";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
